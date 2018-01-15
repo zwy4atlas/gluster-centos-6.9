@@ -1,0 +1,34 @@
+version: '2'
+services:
+  server1:
+    image: gluster/centos:6.9
+    hostname: server1
+    ports:
+#      - "9001:9000"
+#    expose:
+      - "22"
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=appusr
+    volumes:
+       - /home/dataguru/docker/gluster/script:/script
+    command: >
+      bash -c " tail -f /dev/null"
+
+  server2:
+    image: gluster/centos:6.9
+    hostname: server2
+#    links:
+#      - master1
+#    environment: 
+#     - CLUSTERED=true
+    ports:
+#        - "9002:9000"
+#        - "10002:10000"
+#    net: ${NETWORK}
+#    expose:
+      - "22"
+    volumes:
+       - /home/dataguru/docker/gluster/script:/script
+    command: >
+      bash -c "tail -f /dev/null"
+
