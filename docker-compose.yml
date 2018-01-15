@@ -3,6 +3,7 @@ services:
   server1:
     image: gluster/centos:6.9
     hostname: server1
+    privileged: true
     ports:
 #      - "9001:9000"
 #    expose:
@@ -12,11 +13,16 @@ services:
     volumes:
        - /home/dataguru/docker/gluster/script:/script
     command: >
-      bash -c " tail -f /dev/null"
+      bash -c " service glusterd start
+      && gluster peer probe server2
+      && gluster peer probe server3
+      ;  mkdir -p /bricks/brick1/gv0
+      && tail -f /dev/null"
 
   server2:
     image: gluster/centos:6.9
     hostname: server2
+    privileged: true
 #    links:
 #      - master1
 #    environment: 
@@ -30,5 +36,31 @@ services:
     volumes:
        - /home/dataguru/docker/gluster/script:/script
     command: >
-      bash -c "tail -f /dev/null"
+      bash -c "service glusterd start
+      && gluster peer probe server1
+      && gluster peer probe server3
+      ;  mkdir -p /bricks/brick1/gv0
+      && tail -f /dev/null"
 
+  server3:
+    image: gluster/centos:6.9
+    hostname: server3
+    privileged: true
+#    links:
+#      - master1
+#    environment: 
+#     - CLUSTERED=true
+    ports:
+#        - "9002:9000"
+#        - "10002:10000"
+#    net: ${NETWORK}
+#    expose:
+      - "22"
+    volumes:
+       - /home/dataguru/docker/gluster/script:/script
+    command: >
+      bash -c "service glusterd start
+      && gluster peer probe server1
+      && gluster peer probe server2
+      ;  mkdir -p /bricks/brick1/gv0
+      && tail -f /dev/null"
